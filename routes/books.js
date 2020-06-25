@@ -1,7 +1,10 @@
 var express = require("express");
 var router = express.Router();
-const { Book,User } = require("../database/models");
+const { Book, User } = require("../database/models");
+const { default: Axios } = require("axios");
+//import { response } from "express";
 
+const searchURL = "https://www.googleapis.com/books/v1/volumes?q=";
 
 /* GET all books. */
 // /api/books
@@ -9,7 +12,7 @@ router.get("/", async (req, res, next) => {
   // try to get books object from database
   try {
     // books will be the result of the book.findAll promise
-    const books = await Book.findAll({include:User});
+    const books = await Book.findAll({ include: User });
 
     // if books is valid, it will be sent as a json response
     console.log(books);
@@ -19,40 +22,56 @@ router.get("/", async (req, res, next) => {
     next(err);
   }
 });
+
+//route to serve books based off of searchterm
+router.get("/search", async (req, res, next) => {
+  try {
+    const { term } = req.body;
+    console.log(term);
+    let results = [];
+    await Axios.get(`${searchURL}${term}`)
+      .then((response) => {
+        results = response.data;
+      })
+      .catch((error) => console.log(error));
+    res.status(200).json(results);
+  } catch (error) {
+    next(error);
+  }
+});
+
 // Route to serve single book based on its id
 // /api/books/:id
 // /api/books/456 would respond with a book with id 456
 router.get("/:id", async (req, res, next) => {
-    // take the id from params
-    const { id } = req.params;
-    // query the database for a book with matching id
-    try {
-      // if successful:
-      const book = await Book.findByPk(id,{include:User});
-      // send back the book as a response
-      res.status(200).json(book);
-    } catch (err) {
-      // if error:
-      // handle error
-      next(err);
-    }
-
-  });
+  // take the id from params
+  const { id } = req.params;
+  // query the database for a book with matching id
+  try {
+    // if successful:
+    const book = await Book.findByPk(id, { include: User });
+    // send back the book as a response
+    res.status(200).json(book);
+  } catch (err) {
+    // if error:
+    // handle error
+    next(err);
+  }
+});
 // Route to handle adding a book
 // /api/books/
 router.post("/", async (req, res, next) => {
-    console.log(req.body);
+  console.log(req.body);
   // Take the form data from the request body
-  const {uid, title,printType, imageUrl,saleInfo,userId } = req.body;
+  const { uid, title, printType, imageUrl, saleInfo, userId } = req.body;
   // Create a book object
   const bookObj = {
     uid: uid,
-    title:title,
-    printType:printType,
-    imageUrl:imageUrl,
-    saleInfo:saleInfo,
-    userId:userId,
-
+    title: title,
+    printType: printType,
+    imageUrl: imageUrl,
+    saleInfo: saleInfo,
+    userId: userId,
   };
   try {
     const newbook = await Book.create(bookObj);
@@ -75,7 +94,6 @@ router.put("/:id", async (req, res, next) => {
   }
 });
 
-  
 // Route to handle removing a book
 router.delete("/:id", async (req, res, next) => {
   const { id } = req.params;
@@ -89,7 +107,6 @@ router.delete("/:id", async (req, res, next) => {
     // send a success message to the client
     res.sendStatus(204);
   } catch (err) {
-
     next(err);
   }
 });
