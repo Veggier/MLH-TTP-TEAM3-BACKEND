@@ -43,14 +43,13 @@ router.get("/:id", async (req, res, next) => {
 router.post("/", async (req, res, next) => {
     console.log(req.body);
   // Take the form data from the request body
-  const {uid, title,printType, imageUrl,saleInfo,userId } = req.body;
+  const {uid, title, imageUrl,price,userId } = req.body;
   // Create a book object
   const bookObj = {
     uid: uid,
     title:title,
-    printType:printType,
     imageUrl:imageUrl,
-    saleInfo:saleInfo,
+    price:price,
     userId:userId,
 
   };

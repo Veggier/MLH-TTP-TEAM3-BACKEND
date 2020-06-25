@@ -9,10 +9,8 @@ const seedDatabase = async () => {
     Book.create({
       uid:"qAcAAAAAMBAJ",
       title:"Vegetarian Times",
-      printType:"MAGAZINE",
       imageUrl: "http://books.google.com/books/content?id=qAcAAAAAMBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
-      authors:"Active Interest Media, Inc.",
-      saleInfo:"NOT_FOR_SALE"
+      price:12.3
     }),
     // id:{type:Sequelize.STRING},
     // name: { type: Sequelize.STRING,allowNull: false },

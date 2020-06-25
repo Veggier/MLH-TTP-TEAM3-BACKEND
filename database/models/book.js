@@ -4,13 +4,11 @@ const db = require("../db");
 const Book = db.define("book", {
   uid:{type:Sequelize.STRING},
   title: { type: Sequelize.STRING,allowNull: false },
-  printType:{ type: Sequelize.STRING},
   imageUrl: {
-    type: Sequelize.STRING,
+    type: Sequelize.STRING(500),
     defaultValue: "https://via.placeholder.com/480x240?text=Placeholder",
   },
-  authors:{type: Sequelize.STRING},
-  saleInfo:{type:Sequelize.STRING}
+  price:{type:Sequelize.DECIMAL(1000,2)}
 });
 
 module.exports = Book;
